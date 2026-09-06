@@ -21,7 +21,20 @@ Android runtime and visual testing could not be completed. This environment has 
 
 The Android layout, encrypted credential storage, hardware-key interactions, and private-preview display therefore have compile/static validation but have not been exercised on a running Android device in this session. The next device review should cover a square screen, a portrait screen, 150% text, soft-keyboard dialogs, reconnection after process restart, and Keystore persistence.
 
-No live frame, production GitHub workflow, or deployment was tested. A frame acknowledgement cannot be tested because the firmware provides no telemetry.
+No live frame was tested. A frame acknowledgement cannot be tested because the firmware provides no telemetry.
+
+## GitHub publication and Pages deployment
+
+Published on 2026-09-06 to [chuatzeyee/tylendar-studio](https://github.com/chuatzeyee/tylendar-studio), with the portal at **https://chuatzeyee.github.io/tylendar-studio/**.
+
+- [Deploy portal](https://github.com/chuatzeyee/tylendar-studio/actions/runs/34026840612) passed all 13 portal tests and deployed successfully after the repository's initial Pages setup. GitHub Actions is the Pages build source, and HTTPS is enforced.
+- [Render daily calendar](https://github.com/chuatzeyee/tylendar-studio/actions/runs/34026840597) rendered and committed the copied repository's output successfully.
+- [Firmware compile check](https://github.com/chuatzeyee/tylendar-studio/actions/runs/34026840642) passed.
+- Headless Chrome tested the actual Pages URL: HTTP 200, all 10 prints, local artwork/font assets, category filtering, demo apply, enlarged artwork, English poems, and the connection dialog.
+- Desktop width 1440 and mobile widths 390 and 360 passed. Mobile layouts had no horizontal overflow; desktop and phone screenshots were visually inspected. There were no failed asset requests, uncaught browser errors, or GitHub API requests during these demo checks.
+- Publication excludes local build caches, machine configuration, signing keys, and generated Android build artifacts. The original Tylendar source and assets remain unchanged.
+
+Live demo screenshots are stored locally in `screenshots/pages-desktop.png`, `screenshots/pages-mobile-390.png`, and `screenshots/pages-mobile-360.png`.
 
 ## Artifacts
 
