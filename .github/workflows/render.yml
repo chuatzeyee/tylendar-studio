@@ -1,0 +1,53 @@
+name: Render daily calendar
+
+on:
+  schedule:
+    # Each render runs 15 to 25 minutes before an ESP32 wake at 00:20,
+    # 07:30, 13:00 and 19:00 Singapore time. Cron is UTC, Singapore is
+    # UTC+8. The 18:35 SGT render is the dark mode one.
+    - cron: "5 16 * * *"
+    - cron: "5 23 * * *"
+    - cron: "35 4 * * *"
+    - cron: "35 10 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Force light or dark for this render only
+        type: choice
+        options: [auto, light, dark]
+        default: auto
+  push:
+    branches: [main]
+    paths: [generator/**]
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r generator/requirements.txt
+      - run: python generator/generate.py
+        env:
+          ICS_URL: ${{ secrets.ICS_URL }}
+          # Empty on scheduled and push runs, so those follow the clock
+          # and settings.json. Only the Run workflow button sets it.
+          DARK: ${{ inputs.mode == 'dark' && '1' || (inputs.mode == 'light' && '0' || '') }}
+      - name: Commit rendered output
+        run: |
+          git config user.name "tylendar-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add output/tylendar.bin output/preview.png
+          git diff --cached --quiet || git commit -m "render: daily image"
+          # The push can race a settings commit landing mid-run, so
+          # rebase and retry instead of failing the whole render.
+          for i in 1 2 3; do
+            git push && exit 0
+            git pull --rebase || exit 1
+          done
+          exit 1

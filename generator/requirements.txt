@@ -1,0 +1,6 @@
+lunar_python==1.4.8
+Pillow>=10.0
+fonttools>=4.44
+opencc-python-reimplemented==0.1.7
+icalendar==7.2.2
+recurring-ical-events==3.8.2

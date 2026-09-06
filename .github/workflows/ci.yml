@@ -1,0 +1,24 @@
+name: Firmware compile check
+
+on:
+  push:
+    branches: [main]
+    paths: [firmware/**]
+  pull_request:
+    paths: [firmware/**]
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cp firmware/Tylendar/config.example.h firmware/Tylendar/config.h
+      - uses: arduino/compile-sketches@v1
+        with:
+          fqbn: esp32:esp32:esp32
+          platforms: |
+            - name: esp32:esp32
+              source-url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          sketch-paths: |
+            - firmware/Tylendar

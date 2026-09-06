@@ -1,0 +1,106 @@
+[
+  {
+    "key": "jibai",
+    "zi": "雞白",
+    "roman": "ji bai",
+    "gloss": "Cheese Pie",
+    "words": [
+      ["有夠雞白", "utterly cheese pie"],
+      ["雞白面", "a cheese pie face"]
+    ],
+    "radical": "隹",
+    "radical_no": 172,
+    "strokes": 18
+  },
+  {
+    "key": "kanina",
+    "zi": "甘你拿",
+    "roman": "kan ni na",
+    "gloss": "Kenny Nah",
+    "words": [
+      ["甘你拿咧", "kenny nah leh"],
+      ["靜靜甘你拿", "a quiet kenny nah"]
+    ],
+    "radical": "甘",
+    "radical_no": 99,
+    "strokes": 5
+  },
+  {
+    "key": "lanjiao",
+    "zi": "懶叫",
+    "roman": "lan jiao",
+    "gloss": "Long John",
+    "words": [
+      ["講懶叫話", "long john talk"],
+      ["懶叫面", "a long john face"]
+    ],
+    "radical": "心",
+    "radical_no": 61,
+    "strokes": 19
+  },
+  {
+    "key": "nabei",
+    "zi": "那杯",
+    "roman": "na beh",
+    "gloss": "Nah Bay",
+    "words": [
+      ["哇那杯", "wah nah bay"],
+      ["那杯咧", "nah bay leh"]
+    ],
+    "radical": "邑",
+    "radical_no": 163,
+    "strokes": 7
+  },
+  {
+    "key": "jiaksai",
+    "zi": "甲賽",
+    "roman": "jiak sai",
+    "gloss": "Jack Sigh",
+    "words": [
+      ["講甲賽", "talking jack sigh"],
+      ["有夠甲賽", "utterly jack sigh"]
+    ],
+    "radical": "田",
+    "radical_no": 102,
+    "strokes": 5
+  },
+  {
+    "key": "sibei",
+    "zi": "西北",
+    "roman": "si beh",
+    "gloss": "Say Buy",
+    "words": [
+      ["西北貴", "say buy expensive"],
+      ["西北熱", "say buy hot"]
+    ],
+    "radical": "襾",
+    "radical_no": 146,
+    "strokes": 6
+  },
+  {
+    "key": "walao",
+    "zi": "哇佬",
+    "roman": "wa lao",
+    "gloss": "Wah Lau",
+    "words": [
+      ["哇佬欸", "wah lau eh"],
+      ["哇佬哇佬", "double wah lau"]
+    ],
+    "radical": "口",
+    "radical_no": 30,
+    "strokes": 9
+  },
+  {
+    "key": "siao",
+    "zi": "痟",
+    "roman": "siao",
+    "gloss": "See Ow",
+    "words": [
+      ["痟人", "a see ow person"],
+      ["你痟啊", "you see ow ah"]
+    ],
+    "radical": "疒",
+    "radical_no": 104,
+    "strokes": 12
+  }
+]
