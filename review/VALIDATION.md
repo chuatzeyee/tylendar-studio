@@ -1,59 +1,70 @@
-# Validation — Tylendar Studio
+# Tylendar Studio validation
 
-Date: 2026-09-06. All source changes and project artifacts are in `Tylendar-studio`.
+Reviewed on 2026-09-06. All project changes and generated review artifacts are confined to `Tylendar-studio`.
 
-## Passed
+## Interface cleanup
+
+Both clients use **The Open Frame**, an upright 泰曆 seal, a walnut brown preview frame, and **OPEN-SOURCE E-INK GALLERY**. Decorative diagonal arrows and dot separators have been removed. The web masthead no longer includes the date or timezone, and print sequence numbering has been removed.
+
+Web labels are at least 14px and body text is 16px. Android labels are at least 14sp and body text is 16sp. Mobile controls wrap where needed, the print cards have room for their larger labels, and the Android gallery uses one column on narrow screens or with larger system text.
+
+## Completed checks
 
 | Check | Result |
 | --- | --- |
-| Original project integrity | All **103** original source and asset files match their copy-time SHA-256 hashes. No source/assets added or removed. Git history, caches, generated builds, and machine configuration are excluded from the source snapshot. |
-| Portal unit/API tests | **13 passed, 0 failed**, using Node's built-in test runner. |
-| Browser integration | Headless Chrome passes demo isolation, collection filters, draft changes, grouped apply, discard, English poems, edition selection, label validation, photo add/remove/cancel, invalid-file feedback, GET-only connection validation, a one-time dark render override, authenticated image loading, settings preservation, exact-commit render association, failed-save recovery, and disconnect/session clearing. |
-| Browser layout | No document-level horizontal overflow at **360×800**, **390×844**, **900×900**, and **1440×1100**. Desktop and phone screenshots were visually inspected. Reduced-motion mode enabled during checks. |
-| Browser errors | No uncaught page errors in the exercised flows. GitHub traffic was intercepted locally; no real writes or workflow dispatches occurred. |
-| Android compile/APK | `assembleDebug` succeeds. Package: **com.chuatzeyee.tylendar.studio**, version **1.1-studio**. |
-| Android unit tests | **7 passed, 0 failures/errors/skips**. Covers Singapore time boundaries, weekend/dark previews, next-wake rollover, matching render commits, settings patch preservation, invalid JSON, labels, and repository paths. |
-| Android lint | `lintDebug` succeeds with **0 errors and 22 warnings**. Warnings concern inherited target/dependency versions and launcher resources; they are recorded in the generated lint report. |
+| Original project integrity | All 103 original source and asset files match the recorded SHA-256 hashes. No source or assets were added or removed in `../Tylendar`. |
+| Portal unit and API tests | 13 passed, 0 failed. |
+| Browser integration | Passed demo isolation, filters, previews, draft apply/discard, editions, poems, frame labels, photo add/remove/cancel, invalid-file feedback, read-only connection, grouped save, render association, private image retrieval, failed-save recovery, and disconnect/session clearing. GitHub traffic was intercepted locally. |
+| Browser layout | No document overflow at widths 360, 390, 680, 768, 900, 1024, and 1440. Connection dialogs fit at each width. Visible UI text is at least 14px, and the seal has no transform. |
+| Browser runtime | No uncaught page errors in the integration checks. Desktop and mobile screenshots were visually inspected. |
+| Android build | `assembleDebug` succeeds for `com.chuatzeyee.tylendar.studio`, version `1.1-studio`. |
+| Android unit tests | 7 passed, 0 failures, errors, or skips. |
+| Android runtime | Passed on an isolated Android 35 emulator with KVM: portrait and square layouts, keyboard browsing, demo apply, poem dialog, 150% system text, connection dialog, and no runtime crashes. |
+| Android lint | `lintDebug` succeeds with 0 errors and 22 existing warnings concerning dependency/SDK versions and launcher resources. |
+| Documentation | README local file links resolve. The README and macOS Android guide describe the current demo, connection, and draft/apply behavior. |
 
-## Runtime limitation
+The native runtime check exposed a keyboard listener attached after its focus target. Moving the listener before the focus target restored hardware-key browsing; the emulator check passes with that correction.
 
-Android runtime and visual testing could not be completed. This environment has no `/dev/kvm`. A separate software emulator was created under `.build-support/android-review`, with ADB port 5038 and emulator port 5580; it did not finish booting within seven minutes. It was stopped and the isolated ADB server was shut down. No APK was installed on a user device.
+## Screenshots
 
-The Android layout, encrypted credential storage, hardware-key interactions, and private-preview display therefore have compile/static validation but have not been exercised on a running Android device in this session. The next device review should cover a square screen, a portrait screen, 150% text, soft-keyboard dialogs, reconnection after process restart, and Keystore persistence.
+The README uses newly captured local images:
 
-No live frame was tested. A frame acknowledgement cannot be tested because the firmware provides no telemetry.
+- `docs/screenshots/portal.png`: desktop web gallery.
+- `docs/screenshots/portal-tablet.png`: tablet web gallery.
+- `docs/screenshots/portal-mobile.png`: phone web gallery.
+- `docs/screenshots/app.png`: native Android portrait gallery.
 
-## GitHub publication and Pages deployment
-
-Published on 2026-09-06 to [chuatzeyee/tylendar-studio](https://github.com/chuatzeyee/tylendar-studio), with the portal at **https://chuatzeyee.github.io/tylendar-studio/**.
-
-- [Deploy portal](https://github.com/chuatzeyee/tylendar-studio/actions/runs/34026840612) passed all 13 portal tests and deployed successfully after the repository's initial Pages setup. GitHub Actions is the Pages build source, and HTTPS is enforced.
-- [Render daily calendar](https://github.com/chuatzeyee/tylendar-studio/actions/runs/34026840597) rendered and committed the copied repository's output successfully.
-- [Firmware compile check](https://github.com/chuatzeyee/tylendar-studio/actions/runs/34026840642) passed.
-- Headless Chrome tested the actual Pages URL: HTTP 200, all 10 prints, local artwork/font assets, category filtering, demo apply, enlarged artwork, English poems, and the connection dialog.
-- Desktop width 1440 and mobile widths 390 and 360 passed. Mobile layouts had no horizontal overflow; desktop and phone screenshots were visually inspected. There were no failed asset requests, uncaught browser errors, or GitHub API requests during these demo checks.
-- Publication excludes local build caches, machine configuration, signing keys, and generated Android build artifacts. The original Tylendar source and assets remain unchanged.
-
-Live demo screenshots are stored locally in `screenshots/pages-desktop.png`, `screenshots/pages-mobile-390.png`, and `screenshots/pages-mobile-360.png`.
-
-## Artifacts
-
-- `screenshots/portal-desktop.png`
-- `screenshots/portal-tablet.png`
-- `screenshots/portal-mobile.png`
-- `screenshots/portal-small-mobile.png`
-- `../android/app/build/outputs/apk/debug/app-debug.apk`
-- `../android/app/build/reports/tests/testDebugUnitTest/index.html`
-- `../android/app/build/reports/lint-results-debug.html`
-- `change-inventory.json`
-- `android-emulator.log` — software-emulator attempt
+`review/capture_screenshots.py` also refreshes the desktop, tablet, and two mobile sizes in `review/screenshots/`. The historical `pages-*.png` filenames now contain the current local gallery. They are not captures of the deployed site. Native review captures include portrait, square, poem, large-text portrait, and large-text connection views. Bundled print artwork in `docs/previews/` remains the illustrative content displayed inside the frames.
 
 ## Reproduction
 
-Portal tests: `npm test` from `portal`.
+Run the web unit tests:
 
-Original integrity: `python3 -B review/verify_original.py` from the copy root.
+```bash
+npm test --prefix portal
+```
 
-Browser tests: serve `portal` on localhost port 8765, then run `python3 -B review/browser_review.py`. The script uses the installed Chrome binary, intercepts GitHub traffic, and saves screenshots inside the copy.
+Serve `portal/` on localhost port 8765, then run these scripts with Python Playwright and Chrome installed:
 
-Android: `./gradlew testDebugUnitTest assembleDebug lintDebug` from `android`, using the project's pinned toolchain and an installed SDK. This workspace's successful runs used the installed JDK/Gradle under `/home/dmgadmin/android-build` and a private Gradle cache under `.build-support/gradle`.
+```bash
+python3 -B review/browser_review.py
+python3 -B review/capture_screenshots.py
+```
+
+`CHROME_BIN` and `PORTAL_URL` can override the capture script's browser path and URL. The default URL is `http://127.0.0.1:8765`.
+
+Build Android from `android/` with the pinned toolchain and an installed SDK:
+
+```bash
+./gradlew testDebugUnitTest assembleDebug lintDebug
+```
+
+The APK, unit-test report, and lint report are under `android/app/build/`. Runtime captures use `python3 -B review/android_review.py` from the repository root. The script reads `ANDROID_HOME`, creates a dedicated AVD under `.build-support/android-review`, uses ADB port 5038 and emulator port 5580, and shuts down that emulator afterward. It does not target a user device.
+
+Verify the original source snapshot with `python3 -B review/verify_original.py`.
+
+## Limits
+
+These validation runs used the local portal and intercepted GitHub requests. Publishing the cleanup to `main` triggers the **Deploy portal** workflow. Deployment results are recorded in GitHub Actions for [chuatzeyee/tylendar-studio](https://github.com/chuatzeyee/tylendar-studio/actions).
+
+No physical frame was tested. The firmware has no acknowledgement or telemetry, so a successful render cannot confirm that a frame downloaded it. Android credential persistence and private repository requests were not exercised in this demo run; they still need a review with a connected test repository.

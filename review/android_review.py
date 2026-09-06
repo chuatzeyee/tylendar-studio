@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SDK = Path('/home/dmgadmin/android-build/sdk')
+SDK = Path(os.environ.get('ANDROID_HOME', '/home/dmgadmin/android-build/sdk'))
 SUPPORT = ROOT / '.build-support/android-review'
 AVDS = SUPPORT / 'avd'
 AVD = AVDS / 'studio-review.avd'
@@ -27,6 +27,19 @@ def tree():
     return ET.fromstring(data)
 
 
+def wait_for_app():
+    deadline = time.monotonic() + 60
+    while time.monotonic() < deadline:
+        root = tree()
+        if any(node.attrib.get('text') == 'THE OPEN FRAME' for node in root.iter('node')):
+            # The accessibility tree can appear while Android is still removing
+            # the splash surface. Let it finish before a capture or key event.
+            time.sleep(3)
+            return
+        time.sleep(1)
+    raise AssertionError('The gallery did not finish opening.')
+
+
 def tap_text(text, max_scrolls=7):
     for _ in range(max_scrolls):
         root = tree()
@@ -39,6 +52,8 @@ def tap_text(text, max_scrolls=7):
                     return
         adb('shell', 'input', 'swipe', '560', '630', '560', '230', '400')
         time.sleep(.8)
+    screenshot('android-failure.png')
+    (SUPPORT / 'failure.xml').write_bytes(ET.tostring(root))
     raise AssertionError(f'Could not find {text}')
 
 
@@ -62,7 +77,7 @@ def main():
     log = (ROOT / 'review/android-emulator.log').open('w')
     emulator = subprocess.Popen([str(SDK / 'emulator/emulator'), '-avd', 'studio-review', '-port', '5580',
         '-no-window', '-no-audio', '-no-boot-anim', '-no-snapshot', '-no-metrics', '-gpu', 'swiftshader_indirect',
-        '-accel', 'off'], env=ENV, stdout=log, stderr=subprocess.STDOUT)
+        '-accel', 'auto'], env=ENV, stdout=log, stderr=subprocess.STDOUT)
     try:
         deadline = time.monotonic() + 420
         while time.monotonic() < deadline:
@@ -73,16 +88,27 @@ def main():
                 break
             time.sleep(3)
         else:
-            raise RuntimeError('Software emulator did not finish booting within seven minutes.')
+            raise RuntimeError('Emulator did not finish booting within seven minutes.')
         print('Disposable emulator booted.', flush=True)
         for setting in ['window_animation_scale', 'transition_animation_scale', 'animator_duration_scale']:
             adb('shell', 'settings', 'put', 'global', setting, '0')
         apk = ROOT / 'android/app/build/outputs/apk/debug/app-debug.apk'
         adb('install', '-r', str(apk), timeout=90)
-        adb('shell', 'am', 'start', '-n', 'com.chuatzeyee.tylendar.studio/com.chuatzeyee.tylendar.MainActivity')
-        time.sleep(6)
+        adb('shell', 'pm', 'clear', 'com.chuatzeyee.tylendar.studio')
+        adb('shell', 'settings', 'put', 'system', 'font_scale', '1.0')
+        adb('shell', 'wm', 'size', '720x1280')
+        adb('shell', 'input', 'keyevent', 'KEYCODE_WAKEUP')
+        adb('shell', 'input', 'keyevent', 'KEYCODE_MENU')
+        adb('shell', 'am', 'start', '-W', '-n', 'com.chuatzeyee.tylendar.studio/com.chuatzeyee.tylendar.MainActivity')
+        wait_for_app()
         root = tree()
         assert any('Tylendar' in node.attrib.get('text', '') for node in root.iter('node'))
+        screenshot('android-portrait.png')
+        (ROOT / 'docs/screenshots/app.png').write_bytes((SHOTS / 'android-portrait.png').read_bytes())
+        adb('shell', 'am', 'force-stop', 'com.chuatzeyee.tylendar.studio')
+        adb('shell', 'wm', 'size', '720x720')
+        adb('shell', 'am', 'start', '-W', '-n', 'com.chuatzeyee.tylendar.studio/com.chuatzeyee.tylendar.MainActivity')
+        wait_for_app()
         screenshot('android-square.png')
         adb('shell', 'input', 'keyevent', 'KEYCODE_P')
         time.sleep(2)
@@ -93,8 +119,8 @@ def main():
         adb('shell', 'am', 'force-stop', 'com.chuatzeyee.tylendar.studio')
         adb('shell', 'wm', 'size', '720x1280')
         adb('shell', 'settings', 'put', 'system', 'font_scale', '1.5')
-        adb('shell', 'am', 'start', '-n', 'com.chuatzeyee.tylendar.studio/com.chuatzeyee.tylendar.MainActivity')
-        time.sleep(4)
+        adb('shell', 'am', 'start', '-W', '-n', 'com.chuatzeyee.tylendar.studio/com.chuatzeyee.tylendar.MainActivity')
+        wait_for_app()
         screenshot('android-portrait-large-text.png')
         tap_text('Demo collection')
         screenshot('android-connection-large-text.png')

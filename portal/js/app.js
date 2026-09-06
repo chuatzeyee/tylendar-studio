@@ -14,8 +14,7 @@ const el = (tag, text, cls) => { const n = document.createElement(tag); if (text
 const open = id => { if (!$(id).open) $(id).showModal(); };
 function announce(message, kind = '') { $('status-text').textContent = message; $('status').className = `message ${kind}`; }
 function clock() {
-  $('today').textContent = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Singapore', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
-  const wake = nextWake(); $('wake-time').textContent = wake.time; $('wake-relative').textContent = `${wake.tomorrow ? 'tomorrow · ' : ''}${wake.relative}`;
+  const wake = nextWake(); $('wake-time').textContent = wake.time; $('wake-relative').textContent = `${wake.tomorrow ? 'tomorrow, ' : ''}${wake.relative}`;
 }
 function previewUrl() { return latest && client ? `${client.raw}/output/preview.png?t=${Date.now()}` : `assets/previews/${thumbnail(draft.page, draft.mode)}.png`; }
 function renderFilters() {
@@ -27,7 +26,7 @@ function renderFilters() {
 }
 function renderRail() {
   const pages = visiblePages(); $('collection-count').textContent = `${pages.length} PRINTS`;
-  $('collection-label').textContent = `THE COLLECTION / ${group.toUpperCase()}`;
+  $('collection-label').textContent = group.toUpperCase();
   $('print-rail').replaceChildren(...pages.map(page => {
     const b = el('button', undefined, 'print-card'); b.dataset.page = page.id;
     b.setAttribute('aria-label', `Preview ${page.name}`); b.setAttribute('aria-pressed', String(page.id === draft.page));
@@ -64,12 +63,12 @@ function renderControls() {
   document.querySelectorAll('#print-options select, .print-card, #previous, #next, #surprise, #frame-settings').forEach(n => { n.disabled = busy; });
 }
 function renderArtwork() {
-  const p = pageFor(draft.page), n = PAGES.indexOf(p) + 1;
-  $('artwork').src = previewUrl(); $('artwork').alt = `${p.name} — ${latest ? 'latest generated image; frame display unconfirmed' : 'illustrative design preview'}`;
+  const p = pageFor(draft.page);
+  $('artwork').src = previewUrl(); $('artwork').alt = `${p.name}: ${latest ? 'latest generated image; frame display unconfirmed' : 'illustrative design preview'}`;
   $('preview-kind').textContent = latest ? 'LATEST GENERATED IMAGE' : 'ILLUSTRATIVE PREVIEW';
   $('art-title').textContent = p.title; $('art-description').textContent = p.description; $('art-chinese').textContent = p.zh;
-  $('art-group').textContent = `${p.group.toUpperCase()} / NO. ${String(n).padStart(2, '0')}`;
-  $('art-number').textContent = `${String(n).padStart(2, '0')} / 10`; $('art-detail').textContent = p.detail;
+  $('art-group').textContent = p.group.toUpperCase();
+  $('art-detail').textContent = p.detail;
   $('read-poem').hidden = p.id !== 'poem'; $('manage-photos').hidden = p.id !== 'photo';
 }
 function renderAll() { renderArtwork(); renderOptions(); renderRail(); renderControls(); clock(); }
@@ -153,7 +152,7 @@ function renderPhotos() {
       client.image(`generator/photos/${encodeURIComponent(photo.name)}`, connection.signal).then(blob => {
         if (captured !== epoch || !row.isConnected) return;
         const url = URL.createObjectURL(blob); photoObjectUrls.push(url); img.src = url;
-      }).catch(() => { img.alt = `${photo.name} — thumbnail unavailable`; });
+      }).catch(() => { img.alt = `${photo.name}: thumbnail unavailable`; });
     }
     remove.setAttribute('aria-label', `Remove ${photo.name}`); remove.disabled = busy;
     remove.onclick = async () => {
@@ -214,12 +213,12 @@ $('latest-preview').onclick = () => perform(async () => {
   if (latestObjectUrl) URL.revokeObjectURL(latestObjectUrl);
   latestObjectUrl = URL.createObjectURL(blob); $('enlarged-art').src = latestObjectUrl;
   $('enlarged-art').alt = 'Latest generated image. Physical frame display unconfirmed.';
-  $('enlarged-caption').textContent = 'LATEST GENERATED IMAGE · FRAME DISPLAY UNCONFIRMED'; open('art-dialog');
+  $('enlarged-caption').textContent = 'LATEST GENERATED IMAGE. FRAME DISPLAY UNCONFIRMED.'; open('art-dialog');
 });
 $('read-poem').onclick = async () => {
   open('poem-dialog'); $('poem-lines').textContent = 'Loading today’s poem…';
   try { const response = await fetch('assets/poems.json'); if (!response.ok) throw new Error('The bundled poem collection is unavailable.'); const poem = dailyPoem(await response.json()); if (!poem) throw new Error('The poem collection is empty.');
-    $('poem-title').textContent = poem.title_en || poem.title; $('poem-byline').textContent = `${poem.title} · ${poem.author} · ${poem.author_roman || ''}`;
+    $('poem-title').textContent = poem.title_en || poem.title; $('poem-byline').textContent = [poem.title, poem.author, poem.author_roman].filter(Boolean).join(', ');
     $('poem-lines').replaceChildren(...(poem.english || poem.lines).map(line => el('p', line))); $('poem-gist').textContent = poem.gist || '';
   } catch (error) { $('poem-lines').textContent = error.message; }
 };

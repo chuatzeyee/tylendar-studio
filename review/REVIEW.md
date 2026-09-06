@@ -19,7 +19,7 @@ Scope: the web portal and native Android remote in the isolated `Tylendar-studio
 
 ## Design direction
 
-A quiet print collection: warm paper, a charcoal frame, restrained seal-red actions, botanical green accents, large serif artwork titles, and readable sans-serif controls. The artwork carries the interface. Browse first; one explicit apply action commits the complete draft. Demo state, render state, and scheduled wake are distinct.
+A quiet print collection: warm paper, a walnut brown frame, restrained seal-red actions, botanical green accents, large serif artwork titles, and readable sans-serif controls. The artwork carries the interface. Browse first; one explicit apply action commits the complete draft. Demo state, render state, and scheduled wake are distinct.
 
 ## Validation
 
@@ -36,7 +36,7 @@ Recorded after implementation in `VALIDATION.md`. No live GitHub write, workflow
 | Credentials | No write probes. Tokens are persisted only after successful validation. Browser storage is session-scoped; Android uses Keystore AES-GCM. | `github.js`, `Github.kt`, `TokenStore.kt` |
 | Cancellation | Android HTTP calls cancel with their coroutine. Disconnect cancels work and polling; operation identities keep cancelled jobs from overwriting current busy state. | `AppViewModel.kt`, cancellable OkHttp callback adapter |
 | Preview semantics | Artwork is labelled illustrative. Latest generated images are a separate view, retrieved through authenticated Contents API requests. Scheduled wake is not represented as device telemetry. | Both interfaces; private-image API regression test |
-| Responsive UI | Desktop collection/sidebar, mobile horizontal filters and print rail; Android adaptive columns and vertically scrollable content/dialogs. Native controls have at least 48dp target containers. | Browser viewport checks; native runtime limitation recorded separately |
+| Responsive UI | Desktop collection/sidebar, mobile horizontal filters and print rail; Android adaptive columns and vertically scrollable content/dialogs. Native controls have at least 48dp target containers. | Browser viewport checks and disposable-emulator captures |
 | Content and controls | All ten pages, per-page options, label editing, English poems, saved-setting renders, and one-time almanac overrides remain available. | Catalog and UI regression checks |
 | Photos | Portal retains upload/resize/remove, adds demo photos and in-dialog failure feedback. Android explicitly hands photo management to the web portal. | Browser add/remove/cancel/invalid-file scenarios |
 | Isolation | No Git history or remote is copied. Studio has a separate Android application ID, local assets, private build cache, and original-source hashes. | `verify_original.py`, APK output metadata |
@@ -52,4 +52,4 @@ Recorded after implementation in `VALIDATION.md`. No live GitHub write, workflow
 - Android fetches generated previews through the Contents API's base64 response; files over that endpoint's inline-content limit produce a readable error. The bundled/rendered previews in this project are below the limit.
 - Demo edits and Android unsaved drafts are not durable across app/process restarts. The portal warns before leaving with a draft; applying explicitly is the persistence boundary for connected settings.
 - No renderer rewrite, frame firmware change, native home-screen widget, deployment, or interaction with a real frame was needed for this scope.
-- Lint retains warnings about inherited SDK/dependency versions and launcher assets. Native runtime validation depends on a usable emulator or device; this environment has no KVM acceleration.
+- Lint retains warnings about inherited SDK/dependency versions and launcher assets. Native runtime checks use a disposable emulator with KVM acceleration; device telemetry and live frame testing remain outside the local review.

@@ -15,7 +15,7 @@ class StudioLogicTest {
     @Test fun wakeRollsAcrossMidnight() {
         val wake = nextWake(ZonedDateTime.parse("2026-09-06T15:59:00Z"))
         assertEquals("00:20", wake.time)
-        assertEquals("Tomorrow · in 21m", wake.relative)
+        assertEquals("Tomorrow, in 21m", wake.relative)
         assertEquals("07:30", nextWake(ZonedDateTime.parse("2026-09-06T16:20:00Z")).time)
     }
     @Test fun tracksTheMatchingCommit() {

@@ -6,9 +6,9 @@ The original `../Tylendar` project remains unchanged. Its renderer, firmware, fo
 
 ## What changed
 
-- A shared visual direction: warm paper, botanical green, charcoal frames, seal-red actions, and generous serif titles.
+- A shared visual direction: warm paper, botanical green, walnut brown frames, seal-red actions, and generous serif titles. The upright seal and The Open Frame name appear in both clients; the footer reads OPEN-SOURCE E-INK GALLERY. Labels use at least 14px on the web and 14sp on Android.
 - Ten prints grouped into Daily, Nature, Calendar, and Personal collections, with local previews, enlarged artwork, and a surprise selection.
-- The same browse → adjust → apply interaction on web and Android. Browsing, keyboard shortcuts, and option changes produce a draft. Apply saves all changed fields in one commit; discard restores the saved selection.
+- The same browse, adjust, and apply interaction on web and Android. Browsing, keyboard shortcuts, and option changes produce a draft. Apply saves all changed fields in one commit; discard restores the saved selection.
 - Explicit separation between illustrative previews, the latest generated image, and the frame’s next scheduled wake. Neither client claims to know what is physically on the frame.
 - Configurable GitHub owner/repository; main remains the supported renderer branch.
 - Read-only connection validation, clear request failures, bounded network calls, settings validation, conflict retries, and preservation of unrelated settings.
@@ -63,7 +63,9 @@ Browser integration tests intercept GitHub requests locally. Publishing this rep
 
 - `review/REVIEW.md`: original findings, resolutions, and remaining limits.
 - `review/VALIDATION.md`: final test results and environmental limitations.
-- `review/screenshots/`: desktop, tablet, and phone portal captures.
+- `docs/screenshots/`: current desktop, tablet, phone, and native Android images used by the README.
+- `review/screenshots/`: local web captures and Android runtime captures.
+- `review/capture_screenshots.py`: refreshes the web documentation images from the local portal.
 - `review/browser_review.py`: browser regression checks with mocked GitHub traffic.
 - `review/android_review.py`: optional disposable-emulator check; uses its own AVD and ADB port.
 - `review/verify_original.py`: verifies original source/assets against the recorded hashes.

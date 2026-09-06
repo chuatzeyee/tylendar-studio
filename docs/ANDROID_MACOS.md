@@ -1,4 +1,4 @@
-# Building the Tylendar Android app on macOS
+# Building Tylendar Studio on macOS
 
 The app lives in `android/` and is a thin remote control for the frame. It
 talks to the GitHub API with a fine grained token you create in step 6; it
@@ -23,8 +23,8 @@ This gives you:
 ## 2. Get the code
 
 ```bash
-git clone https://github.com/chuatzeyee/Tylendar.git
-cd Tylendar
+git clone https://github.com/chuatzeyee/tylendar-studio.git
+cd tylendar-studio
 ```
 
 Already cloned? Just `git pull`.
@@ -38,7 +38,7 @@ first launch:
 2. Accept the license agreements when prompted.
 3. Let it download the SDK. It lands in `~/Library/Android/sdk`.
 
-Then File > Open and select the `Tylendar/android` folder. Select the
+Then File > Open and select the `tylendar-studio/android` folder. Select the
 `android` folder itself, not the repo root; the repo root is a Python and
 firmware project and Studio will not know what to do with it.
 
@@ -59,7 +59,7 @@ Terminal:
 
 ```bash
 export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-cd Tylendar/android
+cd tylendar-studio/android
 ./gradlew :app:assembleDebug
 ```
 
@@ -107,43 +107,39 @@ Reinstalling over an existing version: `adb install -r ...`.
 Sideloading via adb is exempt from the developer verification requirement
 rolling out in Singapore from 2026-09-30, so this path stays free.
 
-## 6. First run: the token
+## 6. First run and connection
 
-The app opens on a token gate. It needs a fine grained GitHub personal
-access token that can write to this repo. The token is entered once, lives
-only in the app's on device storage (excluded from all Android backups),
-and is never committed anywhere.
+The app opens in a local demo with ten prints. Browse, change options, read
+poems, and try a selection without signing in.
 
-1. Tap CREATE A TOKEN in the app, or open
-   https://github.com/settings/personal-access-tokens/new
-2. Resource owner: you. Repository access: Only select repositories >
-   Tylendar.
-3. Permissions > Repository permissions:
-   - Contents: Read and write (lets the app change page, mode, hotspot)
-   - Actions: Read and write (lets the app trigger and watch renders)
-4. Generate, copy the `github_pat_...` value, paste it into the app, tap
-   UNLOCK.
+To control a frame, tap **Demo collection** and enter the GitHub repository
+that renders it, in `owner/repository` format. Create a fine-grained token
+at <https://github.com/settings/personal-access-tokens/new>, restricted to
+that repository, with Contents and Actions read/write access. Paste the
+token and choose **Connect frame**.
 
-The app verifies the token can actually write before letting you in, the
-same probe the web portal uses. If a permission box was missed, it tells
-you which one.
+Connection validation reads repository data. The app encrypts a validated
+token with Android Keystore and excludes it from backups. A failed save
+keeps the draft available to retry.
 
 ## 7. Using it
 
-- Swipe the carousel to browse the seven pages; the one the frame is
-  showing wears a red seal. Tap SET AS FRAME PAGE to commit: the
-  preview flips instantly to a committed thumbnail (caption reads
-  PREVIEW) and the GitHub render starts. About two minutes later the
-  preview swaps to the real freshly rendered frame image (caption
-  reads LIVE).
-- On the poem page, IN ENGLISH opens the full translation of today's
-  poem.
-- RENDER NOW re-renders without changing anything, in auto, light, or
-  dark.
-- The frame itself picks changes up at its next scheduled wake (shown in
-  the app), or immediately if you press the EN button on the frame.
-- Hardware keyboard shortcuts: A, P, C, L, W, M, Y switch pages, R forces
-  a render.
+- Browse the categories or print cards, then adjust the selected print's
+  options. **Apply to frame** saves the draft together in one commit.
+  **Discard changes** restores the saved selection.
+- **Read today’s poem in English** opens the bundled English reading.
+- **Render saved settings** requests a new image. On the almanac,
+  **Next render only** can force light or dark for that one run.
+- **Latest render** shows the generated image. The gallery thumbnails are
+  illustrative samples; the app cannot confirm the frame's physical display.
+- **Manage the photo rotation** opens the connected repository's web portal.
+- The frame fetches the latest image at its next scheduled wake, or when
+  restarted with the EN button.
+- Keyboard shortcuts: A, P, C, L, W, M, Y, J, O, and F browse the almanac,
+  poem, character, landscape, weather, month, year, vocabulary, photos, and
+  flora. R renders saved settings. Browsing never applies a draft.
+
+![Tylendar Studio Android gallery](screenshots/app.png)
 
 ## Troubleshooting
 

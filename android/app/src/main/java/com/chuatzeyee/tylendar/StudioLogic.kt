@@ -65,7 +65,7 @@ fun nextWake(now: ZonedDateTime = ZonedDateTime.now(SGT)): Wake {
     val minute = time.hour * 60 + time.minute
     val next = listOf(20, 450, 780, 1140).firstOrNull { it > minute } ?: 1460
     val d = next - minute
-    return Wake("%02d:%02d".format((next % 1440) / 60, next % 60), (if (next >= 1440) "Tomorrow · " else "") + if (d >= 60) "in ${d / 60}h ${d % 60}m" else "in ${d}m")
+    return Wake("%02d:%02d".format((next % 1440) / 60, next % 60), (if (next >= 1440) "Tomorrow, " else "") + if (d >= 60) "in ${d / 60}h ${d % 60}m" else "in ${d}m")
 }
 data class RenderRun(val id: Long, val status: String, val conclusion: String, val headSha: String, val branch: String, val event: String)
 fun matchingRun(runs: List<RenderRun>, baseline: Long, sha: String?) = runs.filter { it.id > baseline && it.branch == "main" && if (sha != null) it.headSha == sha else it.event == "workflow_dispatch" }.maxByOrNull { it.id }
